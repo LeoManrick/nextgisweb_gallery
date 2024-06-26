@@ -1,8 +1,5 @@
-from sqlalchemy.ext.orderinglist import ordering_list
-
 from nextgisweb.env import Base, _
 from nextgisweb.lib import db
-
 from nextgisweb.resource import (
     DataScope,
     Resource,
@@ -11,11 +8,12 @@ from nextgisweb.resource import (
     Serializer,
 )
 from nextgisweb.resource import SerializedProperty as SP
+from sqlalchemy.ext.orderinglist import ordering_list
 
 # Класс Gallery, который наследуется от Base и Resource, устанавливая Gallery как тип ресурса в системе. Этот класс содержит поля title, description и resource_url, которые будут хранить информацию о каждом экземпляре ресурса Gallery.
 
 class Gallery(Base, Resource):
-    identity = "Gallery"
+    identity = "gallery"
     cls_display_name = _("Gallery")
 
     __scope__ = DataScope
