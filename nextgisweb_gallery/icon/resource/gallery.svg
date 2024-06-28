@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" 
-xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 62" 
-shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+id="gallery" width="24" height="24">
 
 <path d="M0,0C21.12,0,42.24,0,64,0c0,20.46,0,40.92,0,62-21.12,0-42.24,0-64,0C0,41.54,0,21.08,0,0Z" fill="#dce8f3"/>
 <path d="M0,0C19.8,0,39.6,0,60,0c0,9.24,0,18.48,0,28-19.8,0-39.6,0-60,0C0,18.76,0,9.52,0,0Z" transform="translate(2 32)" fill="#dce8f3"/>
