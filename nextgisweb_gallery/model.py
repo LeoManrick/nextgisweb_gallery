@@ -10,7 +10,7 @@ from nextgisweb.resource import (
 from nextgisweb.resource import SerializedProperty as SP
 from sqlalchemy.ext.orderinglist import ordering_list
 
-# Класс Gallery, который наследуется от Base и Resource, устанавливая Gallery как тип ресурса в системе. Этот класс содержит поля title, description и resource_url, которые будут хранить информацию о каждом экземпляре ресурса Gallery.
+# The Gallery class, which inherits from Base and Resource, establishing Gallery as the resource type on the system. This class contains the title, description, and resource_url fields that will store information about each instance of the Gallery resource.
 
 class Gallery(Base, Resource):
     identity = "gallery"
@@ -18,19 +18,19 @@ class Gallery(Base, Resource):
 
     __scope__ = DataScope
 
-    #поля
+    #Fields (Columns)
 
     title = db.Column(db.Unicode, nullable=False)
     description = db.Column(db.Unicode)
     resource_id = db.Column(db.Unicode)
 
-# Метод check_parent в классе Gallery, который определяет, может ли данный ресурс быть дочерним по отношению к другому ресурсу (в данном случае ResourceGroup).
+# The check_parent method in the Gallery class, which determines whether a given resource can be a child of another resource (in this case, ResourceGroup).
 
     @classmethod
     def check_parent(cls, parent):
         return isinstance(parent, ResourceGroup)
 
-# Сериализатор для ресурса Gallery. определяет, какие атрибуты ресурса Gallery будут доступны для чтения и записи через API NextGIS Web. Сериализатор использует SerializedProperty для определения прав доступа к каждому полю.
+# Serializer for the Gallery resource. Defines which Gallery resource attributes will be readable and writable via the NextGIS Web API. The serializer uses SerializedProperty to determine the access permissions for each field.
 
 class GallerySerializer(Serializer):
     identity = Gallery.identity
