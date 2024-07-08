@@ -4,25 +4,24 @@ from nextgisweb.resource import (
     DataScope,
     Resource,
     ResourceGroup,
-    ResourceScope,
     Serializer,
 )
 from nextgisweb.resource import SerializedProperty as SP
-from sqlalchemy.ext.orderinglist import ordering_list
 
 # The Gallery class, which inherits from Base and Resource, establishing Gallery as the resource type on the system. This class contains the title, description, and resource_url fields that will store information about each instance of the Gallery resource.
 
 class Gallery(Base, Resource):
+    resource_id = db.ForeignKey()
     identity = "gallery"
     cls_display_name = _("Gallery")
 
     __scope__ = DataScope
 
-    #Fields (Columns)
-
     title = db.Column(db.Unicode, nullable=False)
     description = db.Column(db.Unicode)
-    resource_id = db.Column(db.Unicode)
+    items = db.relationship("GalleryItem", cascade="all, delete-orphan")
+
+
 
 # The check_parent method in the Gallery class, which determines whether a given resource can be a child of another resource (in this case, ResourceGroup).
 
@@ -39,3 +38,20 @@ class GallerySerializer(Serializer):
     title = SP(read=DataScope.read, write=DataScope.write)
     description = SP(read=DataScope.read, write=DataScope.write)
     resource_url = SP(read=DataScope.read, write=DataScope.write)
+
+
+
+class GalleryItem(Base):
+    __table__name = "gallery_item"
+
+    id = db.Column(db.Integer, primary_key=True)
+    gallery_id = db.Column(db.Integer, db.ForeignKey("gallery.id"))
+    item_type = db.Column(db.Enum("gallery", "webmap", "layer"), nullable=False)
+    position = db.Column(db.Integer, nullable=True)
+
+    click_operation = db.Column(db.Enum("display", "update"), nullable=False)
+
+    title = db.Column(db.Unicode, nullable=False)
+    description = db.Column(db.Unicode)
+
+    
