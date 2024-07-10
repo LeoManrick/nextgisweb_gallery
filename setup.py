@@ -7,7 +7,6 @@ with io.open("VERSION", "r") as fd:
 
 requires = [
     "nextgisweb>=4.5.0.dev19",
-    "ply",
 ]
 
 entry_points = {
@@ -19,7 +18,7 @@ entry_points = {
 setup(
     name="nextgisweb_gallery",
     version=VERSION,
-    description="Gallery for NextGIS Web",
+    description="Gallery extension for NextGIS Web",
     author="NextGIS",
     author_email="info@nextgis.com",
     packages=find_packages(exclude=["ez_setup", "examples", "tests"]),
