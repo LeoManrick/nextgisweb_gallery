@@ -1,5 +1,11 @@
+import sqlalchemy as sa
+from sqlalchemy import orm
+import sqlalchemy.dialects.postgresql as pg
+
 from nextgisweb.env import Base, _
+from nextgisweb.file_storage import FileObj
 from nextgisweb.lib import db
+
 from nextgisweb.resource import (
     DataScope,
     Resource,
@@ -10,26 +16,49 @@ from nextgisweb.resource import SerializedProperty as SP
 
 # The Gallery class, which inherits from Base and Resource, establishing Gallery as the resource type on the system. This class contains the title, description, and resource_url fields that will store information about each instance of the Gallery resource.
 
+
 class Gallery(Base, Resource):
-    resource_id = db.ForeignKey()
     identity = "gallery"
     cls_display_name = _("Gallery")
 
     __scope__ = DataScope
 
-    title = db.Column(db.Unicode, nullable=False)
-    description = db.Column(db.Unicode)
-    items = db.relationship("GalleryItem", cascade="all, delete-orphan")
+    title = sa.Column(sa.Unicode, nullable=False)
+    items = orm.relationship("GalleryItem", cascade="all, delete-orphan")
+    layout = sa.Column(pg.JSONB, nullable=True)
 
-
-
-# The check_parent method in the Gallery class, which determines whether a given resource can be a child of another resource (in this case, ResourceGroup).
+    # The check_parent method in the Gallery class, which determines whether a given resource can be a child of another resource (in this case, ResourceGroup).
 
     @classmethod
     def check_parent(cls, parent):
         return isinstance(parent, ResourceGroup)
 
-# Serializer for the Gallery resource. Defines which Gallery resource attributes will be readable and writable via the NextGIS Web API. The serializer uses SerializedProperty to determine the access permissions for each field.
+
+# Serializer for the Gallery resource.
+# Defines which Gallery resource attributes will be readable and writable via the NextGIS Web API.
+# The serializer uses SerializedProperty to determine the access permissions for each field.
+
+
+class _items_attr(SP):
+    def getter(self, srlzr):
+        return [item.serialize() for item in srlzr.obj.items]
+
+    def setter(self, srlzr, value):
+        srlzr.obj.items = []
+        for item in value:
+            new_item = GalleryItem(id=value["id"])
+            srlzr.obj.items.append(new_item)
+
+            for attribute in (
+                "gallery_id",
+                "item_type",
+                "resource_id",
+                "click_operation",
+                "title",
+                "description",
+            ):
+                setattr(new_item, attribute, item[attribute])
+
 
 class GallerySerializer(Serializer):
     identity = Gallery.identity
@@ -37,21 +66,38 @@ class GallerySerializer(Serializer):
 
     title = SP(read=DataScope.read, write=DataScope.write)
     description = SP(read=DataScope.read, write=DataScope.write)
-    resource_url = SP(read=DataScope.read, write=DataScope.write)
-
+    items = _items_attr(read=DataScope.read, write=DataScope.write)
 
 
 class GalleryItem(Base):
-    __table__name = "gallery_item"
+    __tablename__ = "gallery_item"
 
-    id = db.Column(db.Integer, primary_key=True)
-    gallery_id = db.Column(db.Integer, db.ForeignKey("gallery.id"))
-    item_type = db.Column(db.Enum("gallery", "webmap", "layer"), nullable=False)
-    position = db.Column(db.Integer, nullable=True)
+    id = sa.Column(sa.Integer, primary_key=True)
+    gallery_id = sa.Column(sa.Integer, sa.ForeignKey("gallery.id"))
+    item_type = sa.Column(
+        sa.Enum("gallery", "webmap", "resource", "card", name="item_type_enum"),
+        nullable=False,
+    )
+    preview_fileobj_id = sa.Column(sa.ForeignKey(FileObj.id))
+    preview_fileobj = orm.relationship(FileObj, lazy="joined")
+    resource_id = sa.Column(sa.ForeignKey(Resource.id))
 
-    click_operation = db.Column(db.Enum("display", "update"), nullable=False)
+    click_operation = sa.Column(
+        sa.Enum("display", "update", "resource", name="click_operation_enum"),
+        nullable=False,
+    )
 
-    title = db.Column(db.Unicode, nullable=False)
-    description = db.Column(db.Unicode)
+    title = sa.Column(sa.Unicode, nullable=False)
+    description = sa.Column(sa.Unicode)
 
-    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "gallery_id": self.gallery_id,
+            "item_type": self.item_type,
+            "preview_fileobj_id": self.preview_fileobj_id,
+            "resource_id": self.resource_id,
+            "click_operation": self.click_operation,
+            "title": self.title,
+            "description": self.description,
+        }
