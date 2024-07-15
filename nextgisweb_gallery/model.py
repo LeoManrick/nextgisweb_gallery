@@ -46,11 +46,11 @@ class _items_attr(SP):
     def setter(self, srlzr, value):
         srlzr.obj.items = []
         for item in value:
-            new_item = GalleryItem(id=value["id"])
+            new_item = GalleryItem()
             srlzr.obj.items.append(new_item)
-
+            print(item)
             for attribute in (
-                "gallery_id",
+                # "gallery_id",
                 "item_type",
                 "resource_id",
                 "click_operation",
