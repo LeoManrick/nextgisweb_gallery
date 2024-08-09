@@ -1,8 +1,13 @@
-import { Space } from "@nextgisweb/gui/antd";
+import { useState } from "react";
+import { Radio, Col, Row } from "@nextgisweb/gui/antd";
 import { LoadingWrapper } from "@nextgisweb/gui/component";
 import { useRouteGet } from "@nextgisweb/pyramid/hook";
 
-interface GalleryItem {
+import { GalleryLayoutGrid } from "./GalleryLayoutGrid";
+import { GalleryLayoutList } from "./GalleryLayoutList";
+import { gettext } from "@nextgisweb/pyramid/i18n";
+
+export interface GalleryItem {
     id: number;
     title: string;
     description: string;
@@ -10,68 +15,47 @@ interface GalleryItem {
 }
 
 export function GalleryDisplay({ id }: { id: number }) {
+    const [viewMode, setViewMode] = useState("grid");
+
     const { data, isLoading } = useRouteGet("resource.item", { id });
 
     if (isLoading) {
         return <LoadingWrapper />;
     }
 
-    return (
-        <ul>
-            {(data?.gallery?.items as GalleryItem[]).map(({ id, title, description, resource_id }) => {
-                 const resourceLink = `http://localhost:8080/resource/${resource_id}`;
+    const galleryItems = data?.gallery?.items as GalleryItem[];
 
-                return (
-                    <li key={id}>
-                        <Space>
-                            <div><strong>Title:</strong> {title}</div>
-                            <div><strong>Description:</strong> {description}</div>
-                            <div>
-                                <strong>Link:</strong>
-                                <a href={resourceLink} target="_blank" rel="noopener noreferrer">
-                                    {resourceLink}
-                                </a>
-                            </div>
-                        </Space>
-                    </li>
-                );
-            })}
-        </ul>
+    if (!galleryItems || galleryItems.length === 0) {
+        return <div>{gettext("No data available")}</div>;
+    }
+
+    return (
+        <>
+            <Row
+                justify="space-between"
+                align="middle"
+                style={{ marginBottom: 16 }}
+            >
+                <Col>
+                    <Radio.Group
+                        value={viewMode}
+                        onChange={(e) => setViewMode(e.target.value)}
+                    >
+                        <Radio.Button value="grid">
+                            {gettext("Grid")}
+                        </Radio.Button>
+                        <Radio.Button value="list">
+                            {gettext("List")}
+                        </Radio.Button>
+                    </Radio.Group>
+                </Col>
+            </Row>
+
+            {viewMode === "grid" ? (
+                <GalleryLayoutGrid data={galleryItems} />
+            ) : (
+                <GalleryLayoutList data={galleryItems} />
+            )}
+        </>
     );
 }
-
-
-// //To obtain all the availiable information about items:
-// interface GalleryDisplayProps {
-//     id: number;
-// }
-
-// export function GalleryDisplay({ id }: GalleryDisplayProps) {
-//     const { data, isLoading } = useRouteGet("resource.item", { id });
-
-//     if (isLoading) {
-//         return <LoadingWrapper />;
-//     }
-
-//     const items = data?.gallery?.items || [];
-
-//     return (
-//         <ul>
-//             {items.map((item: Record<string, any>, index: number) => {
-//                 return (
-//                     <li key={index}>
-//                         <Space direction="vertical">
-//                             {Object.entries(item).map(([key, value]) => {
-//                                 return (
-//                                     <div key={key}>
-//                                         <strong>{key}:</strong> {value}
-//                                     </div>
-//                                 );
-//                             })}
-//                         </Space>
-//                     </li>
-//                 );
-//             })}
-//         </ul>
-//     );
-// }
