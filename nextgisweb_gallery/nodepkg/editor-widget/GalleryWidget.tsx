@@ -10,9 +10,9 @@ import type {
     EditorWidgetProps,
 } from "@nextgisweb/resource/type";
 
+import { GalleryItemWidget } from "./GalleryItemWidget";
 import type { GalleryStore } from "./GalleryStore";
 import { Layer } from "./Layer";
-import { GalleryItemWidget } from "./GalleryItemWidget";
 
 export const EditorWidget: EditorWidgetComponent<
     EditorWidgetProps<GalleryStore>
@@ -23,15 +23,19 @@ export const EditorWidget: EditorWidgetComponent<
         () => ({
             tableActions: [
                 pickToFocusTable(
-                    (res) =>
-                        new Layer(store, {
+                    (res) => {
+                        // TODO: handle any resource classes res.resource.cls
+                        return new Layer(store, {
                             resource_id: res.resource.id,
                             title: res.resource.display_name,
                             description: res.resource.description,
-                        }),
+                            // item_type
+                            // click_operation
+                        });
+                    },
                     {
                         pickerOptions: {
-                            requireClass: "webmap",
+                            // requireClass: "webmap",
                             multiple: true,
                         },
                     }

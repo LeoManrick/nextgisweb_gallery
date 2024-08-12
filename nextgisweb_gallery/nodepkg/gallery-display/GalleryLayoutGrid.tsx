@@ -1,5 +1,6 @@
 import { Col, Divider, Row } from "@nextgisweb/gui/antd";
 import { gettext } from "@nextgisweb/pyramid/i18n";
+
 import type { GalleryItem } from "./GalleryDisplay";
 
 import "./GalleryLayoutGrid.less";
@@ -9,7 +10,6 @@ interface GalleryLayoutGridProps {
 }
 
 export function GalleryLayoutGrid({ data }: GalleryLayoutGridProps) {
-    
     //to check positioning of different size images (can add more images for containers testing):
     const imageUrls = [
         "https://i.redd.it/aiote3dzud141.jpg",
@@ -18,11 +18,10 @@ export function GalleryLayoutGrid({ data }: GalleryLayoutGridProps) {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHxDCKz_iUKYSeu1xQomASd0X7NxwjHXrMxw&s",
     ];
 
-     // Function to get a random index from links in the massive
-     const getRandomIndex = () => {
+    // Function to get a random index from links in the massive
+    const getRandomIndex = () => {
         return Math.floor(Math.random() * imageUrls.length);
     };
-
 
     return (
         <>
@@ -33,7 +32,6 @@ export function GalleryLayoutGrid({ data }: GalleryLayoutGridProps) {
                 className="ngw-gallery-gallery-layout-grid"
             >
                 {data.map((item) => {
-
                     // Generating a random index
                     const randomIndex = getRandomIndex();
                     const randomImage = imageUrls[randomIndex];
@@ -47,10 +45,7 @@ export function GalleryLayoutGrid({ data }: GalleryLayoutGridProps) {
                                 onClick={() => window.open(link, "_blank")}
                             >
                                 <div className="image-container">
-                                    <img
-                                        src={randomImage}
-                                        alt={item.title}
-                                    />
+                                    <img src={randomImage} alt={item.title} />
                                 </div>
                                 <div className="text-container">
                                     <div className="name">{item.title}</div>

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Radio, Col, Row } from "@nextgisweb/gui/antd";
+
+import { Col, Radio, Row } from "@nextgisweb/gui/antd";
 import { LoadingWrapper } from "@nextgisweb/gui/component";
 import { useRouteGet } from "@nextgisweb/pyramid/hook";
+import { gettext } from "@nextgisweb/pyramid/i18n";
 
 import { GalleryLayoutGrid } from "./GalleryLayoutGrid";
 import { GalleryLayoutList } from "./GalleryLayoutList";
-import { gettext } from "@nextgisweb/pyramid/i18n";
 
 export interface GalleryItem {
     id: number;

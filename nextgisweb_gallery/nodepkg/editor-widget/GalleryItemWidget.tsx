@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
 
+import { ImageUploader } from "@nextgisweb/file-upload/image-uploader";
 import { InputValue } from "@nextgisweb/gui/antd";
 import { LotMV } from "@nextgisweb/gui/arm";
-import { Area } from "@nextgisweb/gui/mayout";
+import { Area, Lot } from "@nextgisweb/gui/mayout";
 import { gettext } from "@nextgisweb/pyramid/i18n";
 import { ResourceSelect } from "@nextgisweb/resource/component";
 
@@ -23,11 +24,25 @@ export const GalleryItemWidget = observer<{
                 value={item.description}
                 component={InputValue}
             />
+            <Lot label={gettext("Preview")}>
+                <ImageUploader
+                    onChange={(value) => {
+                        item.preview_fileobj_id.value = value
+                            ? Array.isArray(value)
+                                ? value[0].id
+                                : value.id
+                            : undefined;
+                    }}
+                    onClean={() => {
+                        item.preview_fileobj_id.value = undefined;
+                    }}
+                />
+            </Lot>
             <LotMV
                 label={gettext("Resource")}
                 value={item.resource_id}
                 component={ResourceSelect}
-                // props={{ readOnly: true }}
+                props={{ readOnly: true }}
             />
         </Area>
     );
