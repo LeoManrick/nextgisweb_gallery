@@ -1,11 +1,12 @@
-import sqlalchemy as sa
+from io import BytesIO
+from PIL import Image
 from sqlalchemy import orm
+import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as pg
 
 from nextgisweb.env import Base, _
 from nextgisweb.file_storage import FileObj
-from nextgisweb.lib import db
-
+from nextgisweb.file_upload import FileUpload
 from nextgisweb.resource import (
     DataScope,
     Resource,
@@ -13,6 +14,9 @@ from nextgisweb.resource import (
     Serializer,
 )
 from nextgisweb.resource import SerializedProperty as SP
+
+
+MAX_SIZE = (2000, 2000)
 
 # The Gallery class, which inherits from Base and Resource, establishing Gallery as the resource type on the system. This class contains the title, description, and resource_url fields that will store information about each instance of the Gallery resource.
 
@@ -48,7 +52,6 @@ class _items_attr(SP):
         for item in value:
             new_item = GalleryItem()
             srlzr.obj.items.append(new_item)
-            print(item)
             for attribute in (
                 # "gallery_id",
                 "item_type",
@@ -58,6 +61,23 @@ class _items_attr(SP):
                 "description",
             ):
                 setattr(new_item, attribute, item[attribute])
+
+            if item["preview_fileobj_id"] is not None:
+                fupload = FileUpload(id=item["preview_fileobj_id"])
+                with Image.open(fupload.data_path) as image:
+                    width, height = image.size
+                    resize = width > MAX_SIZE[0] or height > MAX_SIZE[1]
+                    if image.format != "PNG" or resize:
+                        if resize:
+                            image.thumbnail(MAX_SIZE)
+                        buf = BytesIO()
+                        image.save(buf, "png", optimize=True)
+                        fileobj = FileObj().from_content(buf.getvalue())
+                    else:
+                        fileobj = fupload.to_fileobj()
+                    setattr(new_item, "preview_fileobj", fileobj)
+                    setattr(new_item, "preview_fileobj_id", fileobj.id)
+
 
 
 class GallerySerializer(Serializer):
