@@ -49,9 +49,13 @@ export function GalleryLayoutGrid({ data }: GalleryLayoutGridProps) {
                                 </div>
                                 <div className="text-container">
                                     <div className="name">{item.title}</div>
-                                    <div className="description">
-                                        {item.description}
-                                    </div>
+                                    <div
+                                        className="description"
+                                        //React method to render HTML string as JSX elements
+                                        dangerouslySetInnerHTML={{
+                                            __html: item.description,
+                                        }}
+                                    />
                                     <div className="link">
                                         <a
                                             href={link}
