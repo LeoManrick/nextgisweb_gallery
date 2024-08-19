@@ -34,7 +34,7 @@ export class Layer {
     preview_fileobj_id = preview_fileobj_id.init("", this);
 
     click_operation = click_operation.init("display", this);
-    item_type = item_type.init("card", this);
+    item_type = item_type.init("resource", this);
 
     constructor(store: GalleryStore, data: GalleryLayer) {
         this.store = store;

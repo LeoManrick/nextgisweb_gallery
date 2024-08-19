@@ -13,6 +13,7 @@ import type {
 import { GalleryItemWidget } from "./GalleryItemWidget";
 import type { GalleryStore } from "./GalleryStore";
 import { Layer } from "./Layer";
+import type { GalleryLayer } from "./type";
 
 export const EditorWidget: EditorWidgetComponent<
     EditorWidgetProps<GalleryStore>
@@ -25,11 +26,24 @@ export const EditorWidget: EditorWidgetComponent<
                 pickToFocusTable(
                     (res) => {
                         // TODO: handle any resource classes res.resource.cls
+                        let itemType: GalleryLayer["item_type"];
+
+                        switch (res.resource.cls) {
+                            case "basemap":
+                                itemType = "webmap";
+                                break;
+                            case "gallery":
+                                itemType = "gallery";
+                                break;
+                            default:
+                                itemType = "resource";
+                        }
+
                         return new Layer(store, {
                             resource_id: res.resource.id,
                             title: res.resource.display_name,
                             description: res.resource.description,
-                            // item_type
+                            item_type: itemType,
                             // click_operation
                         });
                     },
