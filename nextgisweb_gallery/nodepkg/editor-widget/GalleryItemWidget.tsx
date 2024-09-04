@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { useState } from "react";
 
 import { ImageUploader } from "@nextgisweb/file-upload/image-uploader";
 import { InputValue } from "@nextgisweb/gui/antd";
@@ -12,6 +13,15 @@ import type { Layer } from "./Layer";
 export const GalleryItemWidget = observer<{
     item: Layer;
 }>(function GroupComponentBase({ item }) {
+    const [image, setImage] = useState<string>();
+    if (item.imageExisting) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImage(reader.result as string);
+        };
+        reader.readAsDataURL(item.imageExisting);
+    }
+
     return (
         <Area pad>
             <LotMV
@@ -26,6 +36,7 @@ export const GalleryItemWidget = observer<{
             />
             <Lot label={gettext("Preview")}>
                 <ImageUploader
+                    image={image}
                     onChange={(value) => {
                         item.preview_fileobj_id.value = value
                             ? Array.isArray(value)

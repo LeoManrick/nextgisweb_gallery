@@ -44,6 +44,7 @@ export const EditorWidget: EditorWidgetComponent<
                             title: res.resource.display_name,
                             description: res.resource.description,
                             item_type: itemType,
+
                             // click_operation
                         });
                     },
@@ -64,12 +65,6 @@ export const EditorWidget: EditorWidgetComponent<
         <FocusTable<Layer>
             store={store}
             title={(item) => item.title.value}
-            // columns={[
-            //     {
-            //         render: (l: Layer) => l.keyname.value,
-            //         width: ["25%", "50%"],
-            //     },
-            // ]}
             tableActions={tableActions}
             itemActions={itemActions}
             renderDetail={({ item }) => <GalleryItemWidget item={item} />}

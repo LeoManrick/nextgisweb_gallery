@@ -9,6 +9,7 @@ class GalleryComponent(Component):
         super(GalleryComponent, self).configure()
 
     def setup_pyramid(self, config):
-        from . import view
+        from . import view, api  
 
+        api.setup_pyramid(self, config)
         view.setup_pyramid(self, config)
