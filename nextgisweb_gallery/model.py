@@ -62,7 +62,7 @@ class _items_attr(SP):
             ):
                 setattr(new_item, attribute, item[attribute])
 
-            if item["preview_fileobj_id"] is not None:
+            if item["preview_fileobj_id"]:
                 fupload = FileUpload(id=item["preview_fileobj_id"])
                 with Image.open(fupload.data_path) as image:
                     width, height = image.size
