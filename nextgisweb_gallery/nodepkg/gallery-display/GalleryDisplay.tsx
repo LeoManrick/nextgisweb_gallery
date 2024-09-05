@@ -13,6 +13,7 @@ export interface GalleryItem {
     title: string;
     description: string;
     resource_id: number;
+    preview_fileobj_id?: number;
 }
 
 export function GalleryDisplay({ id }: { id: number }) {

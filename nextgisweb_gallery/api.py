@@ -10,9 +10,10 @@ from nextgisweb.file_storage import FileObj
 
 
 ImageID = Annotated[int, Meta(description="Image ID")]
+ImageSize = Annotated[str, Meta(description="Image size separated by `x`")]
 
 
-def image(request, id: ImageID):
+def image(request, id: ImageID, *, size: ImageSize = None):
     # request.resource_permission(DataScope.read)
     obj = FileObj.filter_by(id=id).one_or_none()
     image = Image.open(obj.filename())
@@ -34,4 +35,5 @@ def setup_pyramid(comp, config):
         "/api/gallery/image/{id}",
         types=dict(id=ImageID),
         get=image,
+        request_method="GET"
     )
